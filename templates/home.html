@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<style>
+    body {
+        background-image:url('https://wallpaperaccess.com/full/924077.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+
+    }
+
+    .button {
+        background-color: #008CBA;
+        border: none;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+        box-shadow: 1px 3px #454545;
+    }
+
+
+    .button:active {background-color: #007ea7}
+    .button:hover {background-color: #007ea7}
+
+    input[type=text], select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .form-container {
+        display: inline-block;
+        margin-right: 60px;
+        margin-left: 60px;
+    }
+
+    h1 {
+        font-size: 35px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #553c9a;
+        text-shadow: 1px 1px #999;
+    }
+
+    #mytable {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #mytable td, #mytable th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    #mytable tr:nth-child(even){background-color: #f2f2f2;}
+    #mytable tr:nth-child(odd){background-color: #ebebeb;}
+
+    #mytable tr:hover {background-color: #dbd9d9;}
+
+    #mytable th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #007ea7;
+        color: white;
+    }
+
+    .tableContainer {
+        height: 600px;
+        overflow: scroll;
+        width: 1000px;
+    }
+
+    .tableContainer thead th {
+        position: sticky;
+        top: 0px;
+    }
+
+
+</style>
+
+<body>
+<center>
+<h1>Запросить данные персонажей</h1>
+<br>
+    <div class="form-container">
+<form id="Form1" action="/publish1" method="post">
+    <button type="submit" class="button">Все данные</button>
+</form>
+    </div>
+
+    <div class="form-container">
+<form id="Form2" action="/publish2" method="post">
+    <input type="text" id="fname" name="fname" placeholder="ID персонажа..." required> <br><br>
+    <button type="submit" class="button" id = "submit" disabled>Данные одного персонажа</button>
+</form>
+    </div>
+
+    <script>
+        const form = document.getElementById('Form2');
+        const submitButton = form.querySelector('button');
+
+        form.addEventListener('input', () => {
+        const isFormValid = form.checkValidity();
+        submitButton.disabled = !isFormValid;
+        });
+
+
+    </script>
+
+    <br>
+    <br>
+    {% if data1 is not none and data1 %}
+    <div class="tableContainer">
+    <table id = "mytable" border="1">
+        <thead>
+            <tr>
+                {% for key, value in data1[0][0].items() %}
+                    <th>{{key}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in data1 %}
+            {% for i in item %}
+            <tr>
+                {% for key, value in i.items() %}
+                <td>
+                    {% if value is iterable and value is not string %}
+                    {% for item in value %}
+                    {% if item in urls1 %}
+                    <a href="{{ item }}">{{ item }}</a><br>
+                    {% else %}
+                    {{ item }} <br>
+                    {% endif %}
+                    {% endfor %}
+                    {% elif value is string %}
+                    {% if value in urls1 %}
+                    <a href="{{ value }}">{{ value }}</a>
+                    {% else %}
+                    {{ value }}
+                    {% endif %}
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>>
+    </div>
+
+    {% endif %}
+
+{% if data2 is not none and data2 %}
+    <div class="tableContainer">
+<table id = "mytable" border="1">
+
+    <tbody>
+
+    {% for key, value in data2.items() %}
+    <tr>
+        <th>{{ key }}</th>
+        <td>
+        {% if value is iterable and value is not string %}
+        {% for item in value %}
+        {% if item in urls2 %}
+        <a href="{{ item }}">{{ item }}</a><br>
+        {% else %}
+        {{ item }} <br>
+        {% endif %}
+        {% endfor %}
+        {% elif value is string %}
+        {% if value in urls2 %}
+        <a href="{{ value }}">{{ value }}</a>
+        {% else %}
+        {{ value }}
+        {% endif %}
+        {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+    </div>
+    <br></br>
+{% else %}
+    <script>
+        {% if msg %}
+            alert("{{msg}}")
+        {% endif %}
+    </script>
+{% endif %}
+
+
+</center>
+
+</body>
+</html>
